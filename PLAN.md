@@ -114,3 +114,11 @@ Gerçek OBS’ye bağlı mevcut Chrome panelinde boş parola ile ayar kaydı/yen
 - [x] Kullanıcının aktif kullanım bildirimi README'ye, tarihli otomatik test raporlarından ayrı kaydedildi.
 
 Bu teslim uygulama mantığını değiştirmez. Depo/belge kontrolleri uygulama veya gerçek OBS testi değildir; performans ve platform kabul kutuları bu işlemle kapanmaz. İlk commit geçmişi korunur; başlangıçtaki örnek değerler geçmişten silinmez.
+
+## 3 Kasım 2026 — İngilizce ve Türkçe README
+
+- [x] Ana README.md İngilizceye çevrildi; mevcut Türkçe içerik README-TR.md olarak korundu.
+- [x] Her iki dilin başına AI desteğiyle geliştirme notu ve karşılıklı dil bağlantısı eklendi.
+- [x] Komut blokları, Markdown kod çitleri ve göreli belge bağlantıları kontrol edildi.
+
+Yalnız belgeler değiştirildi; uygulama, kurulum ve gerçek OBS testleri yeniden çalıştırılmadı.

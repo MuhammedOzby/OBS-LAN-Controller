@@ -1,123 +1,139 @@
 # OBS LAN Controller
 
-Go ile sunulan, Bootstrap Kehribar Gece tabanlı OBS paneli. **Kontrol** ekranında program önizlemesi, OBS metrikleri, üç favori sahne ve ses seviyesi/susturma bulunur. **Deck** düzenlenebilir 12 tuşla sahne, kaynak görünürlüğü, susturma ve medya kontrolü sunar. **Yayın Yönetimi** yayın/kayıt işlemlerinin tek yeridir. Dördüncü sekme **Mobil cihaz ile giriş**, telefonla QR eşleştirme içindir. Güvenilir HTTPS/PWA henüz yoktur.
+> **AI-assisted development:** This project was developed with the help of AI tools.
 
-## İndirme
+**English** | [Türkçe](README-TR.md)
+
+A Go-powered OBS dashboard using the Bootstrap Kehribar Gece theme. The **Control (Kontrol)** tab provides program preview, OBS metrics, three favorite scenes, and audio level/mute controls. **Deck** offers 12 customizable buttons for scenes, source visibility, mute, and media controls. **Broadcast Management (Yayın Yönetimi)** is the only place for streaming and recording actions. The fourth tab, **Mobile sign-in (Mobil cihaz ile giriş)**, pairs phones using QR codes. Trusted HTTPS and PWA support are not available yet.
+
+The current interface uses Turkish labels; English translations below are accompanied by the original labels where needed.
+
+## Download
 
 ```sh
 git clone https://github.com/MuhammedOzby/OBS-LAN-Controller.git
 cd OBS-LAN-Controller
 ```
 
-Canlı önizleme için ayrıca [OBS LAN Controller Live Preview Extension](https://github.com/MuhammedOzby/OBS-LAN-Controller-Live-Preview-Extension) kurulur. Sahne, ses ve yayın/kayıt kontrolü OBS'nin yerleşik WebSocket sunucusunu kullanır.
+For live preview, also install [OBS LAN Controller Live Preview Extension](https://github.com/MuhammedOzby/OBS-LAN-Controller-Live-Preview-Extension). Scene, audio, streaming, and recording controls use OBS's built-in WebSocket server.
 
-> **Kullanım durumu — 3 Kasım 2026:** Proje sahibi uygulamayı ve eklentiyi test edip aktif kullandığını bildirdi. Bu kullanıcı bildirimi, aşağıdaki tarihli test raporlarından ayrıdır. Test edilen OBS sürümü, cihaz/tarayıcı ve sayısal performans ölçümleri ayrıca kaydedilmelidir.
+> **Usage status — November 3, 2026:** The project owner reports having tested and actively using the application and plugin. This report is separate from the dated test reports below. The tested OBS version, device/browser, and numerical performance measurements still need to be documented.
 
-## Çalıştırma
+## Run
 
-OBS'ye yeni başladıysanız önce [kolay OBS ayarları ve kayıt sorunları](RECOMMENDATIONS.md) sayfasına bakın.
+If you are new to OBS, start with the [basic OBS setup and recording troubleshooting guide](RECOMMENDATIONS.md) (Turkish).
 
-Gerçek OBS ve telefonla denemek için: [adım adım elle test listesi](MANUAL_TEST_CHECKLIST.md).
+For testing with real OBS and a phone, see the [step-by-step manual checklist](MANUAL_TEST_CHECKLIST.md) (Turkish).
 
-Go 1.24 veya üzeri gerekir. OBS'yi açın; bu klasörde:
+Requires Go 1.24 or later. Open OBS, then run this command in the project directory:
 
 ```sh
 go run .
 ```
 
-1. Bu bilgisayarda **http://127.0.0.1:8080** adresini açın.
-2. İlk çalıştırmada açılan **Bağlantı ayarları** penceresine OBS'nin WebSocket adresini, portunu ve parolasını girip kaydedin. Aynı bilgisayardaysa OBS IP'si **127.0.0.1**, varsayılan port **4455** olur.
-3. Telefon erişimi istiyorsanız aynı pencerede **HTTP dinleme IP adresi** alanını **0.0.0.0** yapın. Kaydedin; terminalde `Ctrl+C` ile durdurup `go run .` ile tekrar açın. Bu, güvenilir ağdaki diğer cihazların bağlanmasını sağlar.
-4. Telefonda **http://SUNUCU_LAN_IP:8080** adresini açıp aşağıdaki eşleştirme adımlarını izleyin. Bilgisayarın LAN IP'sini `hostname -I` ile öğrenebilirsiniz. **0.0.0.0 tarayıcıya yazılacak adres değildir.**
+1. On the OBS computer, open **http://127.0.0.1:8080**.
+2. In the first-run **Connection settings (Bağlantı ayarları)** dialog, enter and save OBS's WebSocket address, port, and password. For OBS on the same computer, use **127.0.0.1** and the default port **4455**.
+3. To allow phone access, set **HTTP listening IP address (HTTP dinleme IP adresi)** to **0.0.0.0** in the same dialog. Save, stop the process with `Ctrl+C`, and run `go run .` again. Other devices on your trusted network can then connect.
+4. On your phone, open **http://SERVER_LAN_IP:8080** and follow the pairing instructions below. Find the computer's LAN IP with `hostname -I`. **Do not enter 0.0.0.0 in the browser.**
 
-Dosya yoksa ilk kurulum yalnız bu bilgisayara açık başlar. Dosya zaten varsa kayıtlı adres/port kullanılır. **Ayarlar** düğmesi yalnız OBS bilgisayarından (loopback) görünür; telefondan bağlantı/parola ayarı değiştirilemez. Başka port seçtiyseniz yukarıdaki adreslerde 8080 yerine onu kullanın.
+Without a configuration file, first-run setup listens only on this computer. An existing file supplies the saved address and port. The **Settings (Ayarlar)** button is available only from the OBS computer through loopback; phones cannot change the OBS connection or password settings. If you choose a different HTTP port, replace 8080 in these URLs.
 
-İsteğe bağlı açık komut: `go run . serve`. Ayarlar varsayılan olarak çalışma dizinindeki `configuration.json` dosyasından okunur; başka dizinden çalıştırırken `-config /tam/yol/configuration.json` kullanın.
+You can also run `go run . serve`. Settings are read from `configuration.json` in the working directory by default. When running from another directory, use `-config /absolute/path/configuration.json`.
 
-### Yapılandırma
+### Configuration
 
-- `obs.ip`: OBS bilgisayarının IP adresi; başlangıç değeri `127.0.0.1`.
-- `obs.port`: OBS WebSocket portu; başlangıç değeri `4455`.
-- `obs.password`: OBS WebSocket parolası; kendi parolanızı yerel dosyaya girin. Boş değer parolasız OBS için kabul edilir.
-- `server.listening_ip`: HTTP dinleme IP'si; `0.0.0.0` tüm IPv4 arayüzleri, `127.0.0.1` yalnızca bu bilgisayar.
-- `server.port`: HTTP portu; başlangıç değeri `8080`.
+- `obs.ip`: OBS computer's IP address; defaults to `127.0.0.1`.
+- `obs.port`: OBS WebSocket port; defaults to `4455`.
+- `obs.password`: OBS WebSocket password; enter your own password in the local file. An empty value is accepted for OBS without password authentication.
+- `server.listening_ip`: HTTP listening IP; `0.0.0.0` listens on all IPv4 interfaces, while `127.0.0.1` allows access only from this computer.
+- `server.port`: HTTP port; defaults to `8080`.
 
-Normal kullanımda JSON'u elle düzenlemek gerekmez. Örnek dosyayı kopyalarsanız `OBS_WEBSOCKET_PAROLANIZ` etiketini gerçek OBS WebSocket parolanızla değiştirin; parolasız OBS için boş dize kullanın. İsterseniz `configuration.example.json` dosyasını `configuration.json` olarak kopyalayıp düzenleyebilirsiniz. IP adresleri ve 1–65535 port aralığı doğrulanır; mevcut dosya hatalıysa uygulama durur, üzerine yazılmaz. Eksik dosya yerel ilk kurulumu açar. HTTP dinleme adresi/portu değişince yeniden başlatın; pencereden kaydedilen OBS bağlantı ayarı sonraki istekte yeniden bağlanır. `-addr` geçici HTTP adresi önceliğidir; ilk kurulumda yalnız loopback adresi kabul edilir.
+Normal setup does not require editing JSON manually. You may copy `configuration.example.json` to `configuration.json` and edit it. Replace the `OBS_WEBSOCKET_PAROLANIZ` placeholder with your OBS WebSocket password, or use an empty string for OBS without a password.
 
-`configuration.json` parola içerdiği için Git dışında tutulur; paylaşılabilir şablon `configuration.example.json` dosyasıdır. Panel dosyayı atomik olarak yalnız kullanıcıya açık `0600` izinle yazar. Elle oluşturduysanız `chmod 600 configuration.json` ile koruyun. Mevcut parola tarayıcıya geri gönderilmez; pencerede yeni parola boş bırakılırsa korunur, **Kayıtlı parolayı sil** işaretlenirse temizlenir. OBS'nin yerleşik WebSocket sunucusu etkin olmalıdır. Kopmada veriler temizlenir, sonraki isteklerde iki saniyelik bekleme ile yeniden denenir. Komutlar otomatik tekrar edilmez.
+IP addresses and ports in the range 1–65535 are validated. An invalid existing file stops the application and is not overwritten. A missing file opens local first-run setup. Restart after changing the HTTP listening address or port. OBS connection settings saved in the dialog take effect when reconnecting on the next request. `-addr` overrides the HTTP address temporarily; only a loopback address is accepted during first-run setup.
 
-### Sahne ve ses
+`configuration.json` contains a password and is excluded from Git. The shareable template is `configuration.example.json`. The panel writes the file atomically with owner-only `0600` permissions. If you create it manually, protect it with `chmod 600 configuration.json`. The saved password is never sent back to the browser. Leaving the new password field empty preserves the saved password; selecting **Delete saved password (Kayıtlı parolayı sil)** clears it.
 
-- Kontrol sekmesinde **Favorileri düzenle** ile üç sahne yuvasını seçip kaydedin. Yuva boş kalabilir; aynı sahne iki kez seçilemez. İlk kayıttan önce ilk üç OBS sahnesi kullanılır.
-- Tercihler sunucu tarafında, yapılandırma dosyasının yanındaki `configuration.json.favorites.json` dosyasında saklanır ve eşleşmiş cihazlarca paylaşılır. Silinmiş sahne veya başka sahne koleksiyonu sessizce başka sahneye atanmaz; gerekirse favorileri tekrar düzenleyin.
-- Ses bölümünde OBS'nin ses destekli kaynakları listelenir. Kaydırıcı %0–100 arasıdır; düğme susturur/sesi açar. OBS içinde yapılan değişiklikler periyodik okumayla panele yansır. Bağlantı yokken kontroller kapanır; gönderilen işlem OBS'den tekrar okunarak doğrulanır.
+OBS's built-in WebSocket server must be enabled. On disconnect, stale data is cleared and subsequent requests retry after a two-second delay. Commands are not replayed automatically.
 
-Önizleme ayrı OBS eklentisinin H.264 program videosunu Unix soketinden alıp **yeniden kodlamadan WebRTC** ile tarayıcıya taşır. Panel ekran görüntüsü döngüsü kullanmaz. Video bağlantısı ve OBS kontrol bağlantısı ayrı izlenir; video kopması sahne/Deck/yayın kontrollerini kapatmaz. Bit hızı gönderilen baytların zaman farkından hesaplanır; ilk örnek, sayaç sıfırlanması ve pasif/yeniden bağlanan yayın için değer gösterilmez. Kalite etiketi ölçülen düşen kare/ağ tıkanıklığına bağlı teknik göstergedir, izleyici kalitesi ölçümü değildir.
+### Scenes and audio
 
-### OBS eklentisiyle aynı bilgisayarda başlatma (Linux)
+- In the Control tab, use **Edit favorites (Favorileri düzenle)** to select and save three scene slots. Slots may be empty; the same scene cannot occupy two slots. Before the first save, the first three OBS scenes are used.
+- Preferences are stored server-side in `configuration.json.favorites.json` beside the configuration file and shared by paired devices. Deleted scenes or a different scene collection are not silently substituted; edit favorites again if needed.
+- The audio section lists OBS sources that support audio. The slider covers 0–100%; the button mutes or unmutes. Changes made in OBS are reflected by periodic polling. Controls are disabled when disconnected, and submitted changes are verified by reading OBS again.
 
-1. Yerel Linux OBS'ye **OBS LAN Controller Live Preview Extension** eklentisini kurup OBS'yi yeniden açın. Flatpak bu teslimde doğrulanmadı.
-2. Controller'ı **OBS'yi açan aynı kullanıcıyla**, masaüstü oturumunun terminalinden çalıştırın. `sudo` kullanmayın. `XDG_RUNTIME_DIR` masaüstü oturumundan gelmelidir (genellikle `/run/user/UID`); rastgele ortak/geçici bir dizin atamayın.
-3. Arch/CachyOS'ta Controller derlemesi için `sudo pacman -Syu --needed go` yeterlidir. OBS SDK/CMake/Node/FFmpeg Controller'ın çalışması için gerekli değildir. Bu klasörde:
+Preview receives H.264 program video from the companion OBS plugin over a Unix socket and forwards it to the browser using **WebRTC without re-encoding**. The panel does not use a screenshot loop. Video and OBS control connections are tracked separately; losing video does not disable scene, Deck, or broadcast controls.
+
+Bitrate is calculated from the change in bytes sent over time. No value is shown for the first sample, a counter reset, or an inactive/reconnecting stream. The quality label is a technical indicator based on measured dropped frames/network congestion, not a measurement of viewer experience.
+
+### Run alongside the OBS plugin on the same computer (Linux)
+
+1. Install **[OBS LAN Controller Live Preview Extension](https://github.com/MuhammedOzby/OBS-LAN-Controller-Live-Preview-Extension)** into native Linux OBS and restart OBS. Flatpak has not been validated for this release.
+2. Run the Controller **as the same user who runs OBS**, from a terminal in the desktop session. Do not use `sudo`. `XDG_RUNTIME_DIR` must come from that session, usually `/run/user/UID`; do not point it to an arbitrary shared or temporary directory.
+3. On Arch/CachyOS, `sudo pacman -Syu --needed go` provides the Controller build requirement. The Controller does not require the OBS SDK, CMake, Node.js, or FFmpeg to run. In this directory:
 
    ```sh
-   # Yalnız yapılandırma dosyanız yoksa:
+   # Only if you do not already have a configuration file:
    cp -n configuration.example.json configuration.json
    chmod 600 configuration.json
-   # Dosyadaki obs.ip=127.0.0.1, port ve OBS WebSocket parolasını ayarlayın.
+   # Set obs.ip=127.0.0.1, the port, and your OBS WebSocket password in the file.
    go build -o obs-lan-controller .
    ./obs-lan-controller serve
    ```
 
-4. Önce `http://127.0.0.1:8080` adresindeki **Kontrol** sekmesini açın. Video, sekme görünür ve WebRTC bağlıyken başlar. Son izleyici ayrılınca veya sayfa gizlenince durur; görünür olduğunda yeniden bağlanır. Eklenti otomatik yeniden bağlandığından Controller'ı OBS'den sonra açabilirsiniz.
-5. Telefon için mevcut `/pair` akışıyla eşleştirin ve LAN IP'sinden paneli açın. Modern H.264/WebRTC destekli tarayıcı gerekir. Otomatik oynatma engellenirse video alanına dokunun. Uygulama internet STUN/TURN kullanmaz; yalnız doğrudan yerel/LAN ICE adayları vardır. Güvenlik duvarı HTTP TCP 8080 dışında WebRTC'nin dinamik UDP trafiğine de izin vermelidir. Uygulama güvenlik duvarını değiştirmez, internete port yönlendirmesi yapmayın.
+4. Open the **Control (Kontrol)** tab at `http://127.0.0.1:8080`. Video starts when the tab is visible and WebRTC is connected. It stops when the last viewer leaves or the page becomes hidden, and reconnects when visible again. The plugin reconnects automatically, so you may start the Controller after OBS.
+5. For phone access, pair through the existing `/pair` flow and open the panel using the LAN IP. A modern browser with H.264/WebRTC support is required. If autoplay is blocked, tap the video. The application does not use internet STUN/TURN servers; it uses direct local/LAN ICE candidates only. In addition to HTTP TCP 8080, the firewall must allow WebRTC's dynamic UDP traffic. The application does not change firewall rules. Do not forward ports from the internet.
 
-Video soketi IP/port değildir: `$XDG_RUNTIME_DIR/obs-lan-controller/preview.sock`. Controller sunucu, eklenti istemcidir; 0700 dizin/0600 soket ve aynı UID peer kontrolü kullanılır. İkinci Controller bu soketi devralmaz. Soket başlangıcı başarısızsa HTTP/OBS kontrol çalışmaya devam eder ve logda neden gösterilir. Durum teşhisi için yerel tarayıcıda `/api/preview/status` açılabilir. `connected` eklenti bağlantısını, `streaming` son üç saniyede gelen H.264 video verisini belirtir; tarayıcının gerçekten çözdüğü kare veya gecikme ölçümü değildir. API'deki `fps` encoder yapılandırmasıdır; paneldeki önizleme FPS'i ise tarayıcı WebRTC alıcı istatistiğinden ölçülür ve veri yoksa `—` gösterilir.
+The video socket is a filesystem path, not an IP/port: `$XDG_RUNTIME_DIR/obs-lan-controller/preview.sock`. The Controller is the server and the plugin is the client. They use a 0700 directory, a 0600 socket, and same-UID peer checks. A second Controller does not take over the socket. If socket startup fails, HTTP/OBS control remains available and the reason is logged.
 
-İlk sürüm en fazla **3 eşzamanlı önizleme oturumu** kabul eder; bu bir ölçülmüş kapasite garantisi değil kaynak sınırıdır. Bağlanmamış oturumlar 15 saniyede, oturumlar en geç bir saatte kapatılır; görünür panel yeniden bağlanır. LAN eşleştirme iptali/süre bitişi video oturumunu da kapatır. Yavaş izleyicide sınırlı kuyruk temizlenip sonraki anahtar kare beklenir. Ses gönderilmez. Mevcut eklenti protokolü değişmediğinden bu Controller güncellemesi için eklentiyi yeniden kurmak gerekmez.
+For diagnosis, open `/api/preview/status` from the local browser. `connected` indicates a plugin connection; `streaming` indicates receipt of H.264 video during the last three seconds. Neither measures browser-decoded frames or latency. The API's `fps` is the encoder configuration. The panel's preview FPS is measured from browser WebRTC receiver statistics and displays `—` when no data is available.
 
-Doğrulama: gerçek H.264 FFmpeg test görüntüsü → simüle eklenti → gerçek Unix soketi → WebRTC/SRTP/RTP → H.264 çözümü otomatik test edildi. Bu, gerçek OBS program videosu, telefon, sahne geçişi veya performans kabulünün yerine geçmez; bunlar hedef bilgisayarda ayrıca doğrulanmalıdır. FFmpeg yalnız isteğe bağlı entegrasyon test aracıdır, uygulama bağımlılığı değildir.
+The initial version allows at most **3 concurrent preview sessions**. This is a resource limit, not a measured capacity guarantee. Unconnected sessions expire after 15 seconds; all sessions close after at most one hour, with visible panels reconnecting. Revoking or expiring LAN pairing also closes the video session. For a slow viewer, the bounded queue is cleared and waits for the next keyframe. Audio is not transmitted. The existing plugin protocol is unchanged, so this Controller update does not require reinstalling the plugin.
 
-Paylaşılabilir örnek yapılandırma ve dosyasız ilk kurulum yalnız loopback (`127.0.0.1:8080`) üzerinde başlar. Telefon erişimi için yerel ayarlar penceresinden HTTP dinleme adresini `0.0.0.0` yapıp Controller'ı yeniden başlatın. Yalnızca güvenilir yerel ağda kullanın, internete port yönlendirmesi yapmayın. **HTTP şifreli değildir; ağ trafiğini okuyabilen biri kodu veya oturumu ele geçirebilir.** Güvenilir HTTPS üretim teslim şartı olarak açıktır. Güvenlik duvarı TCP 8080 erişimini engelliyorsa ayrıca izin gerekir; uygulama sistem/güvenlik duvarı ayarlarını değiştirmez.
+Automated validation used real H.264 FFmpeg test video → simulated plugin → real Unix socket → WebRTC/SRTP/RTP → H.264 decoding. This does not replace testing real OBS program video, phones, scene transitions, or performance on the target computer. FFmpeg is an optional integration-test tool, not an application dependency.
 
-### Telefon/LAN eşleştirme
+Both the shareable example and first-run setup without a file listen on loopback only (`127.0.0.1:8080`). For phone access, change the HTTP listening address to `0.0.0.0` in local settings and restart the Controller. Use only a trusted local network and do not forward ports from the internet. **HTTP is not encrypted; someone able to read network traffic could capture the pairing code or session.** Trusted HTTPS remains an open production requirement. If the firewall blocks TCP 8080, access must be allowed separately; the application does not change system or firewall settings.
 
-1. OBS bilgisayarında `http://127.0.0.1:8080` açıp **Mobil cihaz ile giriş** sekmesine geçin. İsterseniz doğrudan `http://127.0.0.1:8080/pair` de açabilirsiniz. Kendi HTTP portunuz farklıysa onu kullanın.
-2. Telefon ve bilgisayar aynı güvenilir ağdayken telefonun normal kamerasıyla QR kodu okutun ve çıkan bağlantıyı açın. Kod elle yazılmadan eşleşip Kontrol ekranına geçilir; tarayıcıya kamera izni vermeniz gerekmez.
-3. Birden fazla QR varsa telefonun bağlı olduğu Wi-Fi/LAN adresinin altındakini seçin. LAN adresi kullanılamıyor yazarsa **Ayarlar → HTTP dinleme IP adresi** alanını `0.0.0.0` yapıp kaydedin ve yalnız Controller'ı yeniden başlatın. Güvenlik duvarını tümden kapatmayın.
-4. Kamera okuyamıyorsa telefonda `http://SUNUCU_LAN_IP:8080` açıp aynı sayfadaki 12 karakterli kodu elle girin.
+### Phone/LAN pairing
 
-QR ve kod 5 dakika geçerli ve tek kullanımlıktır; bir telefonu eşleştirdikten sonra diğer telefon için yeni kod açın. `/pair` sayfasını bilgisayarda yenilemek önceki kodu geçersiz kılar; dördüncü sekme geçerli mevcut kodu paylaşır. Süre dolduğunda veya kod kullanıldığında yeni QR açın. QR yalnız bilgisayardaki loopback erişiminde görünür; eşleşmiş telefon yeni kod/QR göremez veya üretemez.
+1. On the OBS computer, open `http://127.0.0.1:8080` and select **Mobile sign-in (Mobil cihaz ile giriş)**. You can also open `http://127.0.0.1:8080/pair` directly. Use your configured HTTP port if different.
+2. With the phone and computer on the same trusted network, scan the QR code using the phone's normal camera and open the link. The phone pairs and opens Control without typing a code. Browser camera permission is not required.
+3. If several QR codes are shown, choose the one under the phone's Wi-Fi/LAN address. If no LAN address is available, set **Settings → HTTP listening IP address (Ayarlar → HTTP dinleme IP adresi)** to `0.0.0.0`, save, and restart only the Controller. Do not disable the entire firewall.
+4. If the camera cannot scan the code, open `http://SERVER_LAN_IP:8080` on the phone and enter the 12-character code shown on the same page.
 
-Oturum 12 saat sürer. **Tüm LAN oturumlarını iptal et** düğmesi veya sunucuyu yeniden başlatmak erişimi kaldırır. Bu nedenle sunucu tekrar açılınca yeniden giriş istenmesi normaldir; tekrar QR okutabilirsiniz. QR kalıcı giriş veya şifreli bağlantı sağlamaz. OBS parolası QR'a konmaz; QR yerelde üretilir, harici bir QR servisine gönderilmez.
+QR codes and pairing codes are single-use and expire after five minutes. Generate a new code for each additional phone. Refreshing `/pair` on the computer invalidates the previous code; the fourth tab shares the current valid code. Generate a new QR code after expiry or use. QR codes are shown only through loopback on the computer. Paired phones cannot view or generate a new pairing code/QR.
 
-Eşleştirilmemiş LAN API istekleri 401 alır; panel sayfaları eşleştirmeye yönlenir. Oturum çerezi HttpOnly/SameSite=Strict, doğrudan TLS altında ayrıca Secure'dür. En fazla 128 oturum ve dakikada 20 başarısız kod denemesi kabul edilir. OBS parolası eşleştirme kodu değildir, tarayıcıya gönderilmez. Host koruması yalnız localhost/loopback ve sunucunun başlangıçta tespit ettiği arayüz IP'lerini kabul eder; keyfi DNS adı ve proxy başlıkları güvenilmez. IP değişince sunucuyu yeniden başlatın. Reverse proxy desteği yoktur; loopback proxy arkasına koymak yerel erişim sınırını geçersiz kılabilir. Tüm istek gövdeleri 5 saniyelik okuma sınırına tabidir.
+Sessions last 12 hours. **Revoke all LAN sessions (Tüm LAN oturumlarını iptal et)** or restarting the server removes access. Signing in again after a restart is expected; scan a new QR code. QR pairing does not provide permanent sign-in or encryption. The OBS password is not included in the QR code. QR codes are generated locally without an external QR service.
 
-## İlk GitHub yüklemesinden güncelleme
+Unpaired LAN API requests receive 401; panel pages redirect to pairing. Session cookies use HttpOnly/SameSite=Strict and Secure when served directly over TLS. Limits are 128 sessions and 20 failed code attempts per minute. The OBS password is not the pairing code and is never sent to the browser.
 
-İlk yüklemedeki `configuration.json`, `configuration.json.favorites.json` ve derlenmiş `obs-lan-controller` artık Git tarafından dağıtılmaz. Örnek ayarlar `configuration.example.json` içindedir; uygulamayı kaynaklardan derleyin. Yeni favori seçimleri yerelde saklanır ve Git dışında kalır.
+Host protection accepts only localhost/loopback and interface IPs detected at startup. Arbitrary DNS names and proxy headers are not trusted. Restart if the IP changes. Reverse proxies are unsupported; a loopback proxy could bypass the local-access boundary. All request bodies have a five-second read timeout.
 
-İlk yüklemeden klonladığınız bir çalışma klasörünü güncelliyorsanız **`git pull` öncesinde**, mevcut yapılandırmanızı ve favori dosyanızı repo dışında özel bir klasöre yedekleyin. Takipten çıkarma güncellemesi bu dosyaları çalışma klasöründen kaldırabilir. Güncellemeden sonra dosyaları eski konumlarına geri koyun ve `configuration.json` izinlerini `chmod 600 configuration.json` ile koruyun. Derlenmiş uygulamayı `go build -o obs-lan-controller .` ile yeniden oluşturun. Çalışan Controller'ı uygun zamanda yeniden başlatın.
+## Updating from the initial GitHub upload
 
-## Geliştirme
+The initially uploaded `configuration.json`, `configuration.json.favorites.json`, and compiled `obs-lan-controller` are no longer distributed through Git. Use `configuration.example.json` as the template and build the application from source. New favorite selections remain local and are excluded from Git.
 
-Arayüz 19:9 yatay ekranları önceliklendirir ve mevcut tarayıcı alanına (`100dvh`) sığar; yatay/dikey kaydırma yoktur. Başlık, sekmeler ve alt bilgi yerini korur; içerik kalan alanı kullanır. Dikey ekranlar da desteklenir. Yeni bileşenler eklenirken içerik taşması ayrıca test edilmelidir.
+If updating a working copy cloned from the initial upload, **before running `git pull`**, back up your configuration and favorites outside the repository in a private directory. The update removing these files from tracking may remove them from your working directory. Restore them after updating and protect `configuration.json` with `chmod 600 configuration.json`. Rebuild with `go build -o obs-lan-controller .`. Restart the running Controller at a suitable time.
 
-- `main.go`: yalnızca uygulama giriş noktası ve hata çıkışı.
-- `Lib/configuration.go`: `Configuration` ve `ReadConfiguration`; JSON okuma ve IP/port doğrulaması.
-- `Lib/settings.go`: yalnız loopback'ten bağlantı ayarları, parolanın korunması ve atomik kayıt.
-- `Lib/favorites.go`: üç favori sahnenin kalıcı seçimi ve API'leri.
-- `Lib/audio.go`: ses kaynakları, doğrulanan seviye ve susturma işlemleri.
-- `Lib/obs.go`: kimlik doğrulamalı OBS WebSocket istemcisi, metrikler, geçici screenshot ve sahne değişimi/doğrulaması.
-- `Lib/serve.go`: `Run` ve `NewHandler`; Gin yönlendirmesi, şablonlar, statik dosya sunumu ve `http.Server` ile temiz kapanma.
-- `web/assets.go`: şablon ve statik dosyaları `go:embed` ile gömer; çalışma dizininden bağımsız sunulur.
-- `web/templates/*.tmpl`: ortak düzen ve üç sayfa alanı.
-- `web/static/app.css`: sayfa yerleşimi ve Kehribar Gece renkleri.
-- `web/static/app.js`: periyodik durum yenileme ve sahne kontrolleri.
-- `web/static/audio.js`, `settings.js`: ses işlemleri ve yerel ayar penceresi.
-- `web/static/vendor/`: temanın yerel CSS kopyası ve lisansı.
+## Development
 
-Dosyalar `go:embed` ile derlenir; şablon/CSS değişikliklerinden sonra sunucuyu yeniden başlatın. Node.js, CDN veya çalışma anında internet gerekmez. Henüz PWA yoktur.
+The layout prioritizes 19:9 landscape screens and fits the available browser area (`100dvh`) without horizontal or vertical page scrolling. The header, tabs, and footer retain their positions while content uses the remaining space. Portrait screens are also supported. Check for overflow when adding components.
+
+- `main.go`: application entry point and error exit only.
+- `Lib/configuration.go`: `Configuration` and `ReadConfiguration`; JSON loading and IP/port validation.
+- `Lib/settings.go`: loopback-only connection settings, password preservation, and atomic saving.
+- `Lib/favorites.go`: persistent selection of three favorite scenes and related APIs.
+- `Lib/audio.go`: audio sources and verified level/mute actions.
+- `Lib/obs.go`: authenticated OBS WebSocket client, metrics, temporary screenshots, and scene switching/verification.
+- `Lib/serve.go`: `Run` and `NewHandler`; Gin routes, templates, static serving, and clean shutdown through `http.Server`.
+- `web/assets.go`: embeds templates and static files with `go:embed`, independent of the working directory.
+- `web/templates/*.tmpl`: shared layout and page areas.
+- `web/static/app.css`: layout and Kehribar Gece colors.
+- `web/static/app.js`: periodic status refresh and scene controls.
+- `web/static/audio.js`, `settings.js`: audio actions and the local settings dialog.
+- `web/static/vendor/`: local theme CSS and its license.
+
+Assets are compiled using `go:embed`; restart the server after template/CSS changes. Node.js, a CDN, and internet access are not needed at runtime. PWA support is not available yet.
 
 ```sh
 go test ./...
@@ -125,12 +141,14 @@ go vet ./...
 go build -o obs-lan-controller .
 ```
 
-Test sonuçları `test_output/` altında tutulur. Gerçek demo OBS üzerinde Deck sahne geçişi, kaynak göster/gizle, sustur/aç ve medya oynat/duraklat/yeniden başlat/durdur döngüsü doğrulandı. Test geçici sahne ve yerel medya girdisi oluşturup kaldırır; önceki program sahnesini geri yükler ve temizliği tekrar okuyarak doğrular. Yayın/kayıt durumu değiştirilmez. Fiziksel telefon/tablet ve uzun süreli yük testi yapılmadı.
+Test results are stored under `test_output/`. On real demo OBS, Deck scene switching, source show/hide, mute/unmute, and media play/pause/restart/stop were verified. The test creates and removes a temporary scene and local media input, restores the previous program scene, and verifies cleanup by reading OBS again. Streaming/recording state is not changed. Physical phone/tablet and long-running load tests were not performed in those reports.
 
-2 Kasım 2026 Terra tesliminde Go/Node/gerçek headless Chrome testleri, race kontrolü, vet ve derleme geçti. Yeni derlemeyle gerçek OBS'den durum, ses kaynakları ve favori seçenekleri yalnız okundu. Yeni özelliklerin gerçek sahne/ses komutları, fiziksel cihaz ve kayıt kabulü hâlâ açık: önceki hızlı kayıt testinden kalan kayıt aktif görünüyor. Bu nedenle **Milestone 1'in genel gerçek OBS kabulü verilmedi**; ayrıntılar `PLAN.md` ve test raporlarındadır.
+The November 2, 2026 Terra delivery passed Go/Node/real headless Chrome tests, race checks, vet, and builds. The new build read real OBS status, audio sources, and favorite options without changing them. That delivery's acceptance of new scene/audio commands, physical devices, and recording remained open; an earlier quick recording test was observed as still active at the time. **Overall real-OBS acceptance for Milestone 1 was not granted.** See `PLAN.md` and the dated reports for context and subsequent observations.
 
-Canlı Deck kabul testi yalnız açık izinle: `OBS_DECK_LIVE=1 go test ./Lib -run '^TestDeckLiveAcceptance$' -v -count=1`. Önce `test_output/deck-acceptance.mp4` yoluna en az birkaç saniyelik sesli yerel video yerleştirin; normal testler OBS'ye bağlanmaz. Görünürlük tuşları koleksiyon ve kaynak kimliğine bağlanır; eski kimliksiz tuşlar düzenleyiciden yeniden atanmalıdır. Düzen yalnız bu tarayıcının localStorage alanındadır.
+Run the live Deck acceptance test only with explicit permission:
+`OBS_DECK_LIVE=1 go test ./Lib -run '^TestDeckLiveAcceptance$' -v -count=1`.
+First place a local video with audio lasting at least a few seconds at `test_output/deck-acceptance.mp4`. Normal tests do not connect to OBS. Visibility buttons are bound to collection and source identities; old buttons without identities must be reassigned in the editor. The layout is stored only in this browser's localStorage.
 
-## Tema kaynağı
+## Theme source
 
-[Bootstrap Kehribar Gece](https://github.com/MuhammedOzby/bootstrap-kehribar-gece), commit `0a7d4423c00e3dab021ec70570224f7d41466f4f`, `dist/css/bootstrap.min.css`. Kaynak dosya değiştirilmeden alınmıştır. Lisans: `web/static/vendor/LICENSE.bootstrap`. Uygulamaya özgü yerleşim ve kehribar/gece renkleri `app.css` katmanındadır.
+[Bootstrap Kehribar Gece](https://github.com/MuhammedOzby/bootstrap-kehribar-gece), commit `0a7d4423c00e3dab021ec70570224f7d41466f4f`, `dist/css/bootstrap.min.css`. The upstream file is included unchanged. License: `web/static/vendor/LICENSE.bootstrap`. Application-specific layout and amber/night colors are layered in `app.css`.
