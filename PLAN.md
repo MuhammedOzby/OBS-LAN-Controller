@@ -106,3 +106,11 @@ Nicel ek yük bütçesi ilk Linux donanım ölçümünden sonra belirlenir. Sür
 ## 2 Kasım 2026 15:05 — manuel liste denemesi
 
 Gerçek OBS’ye bağlı mevcut Chrome panelinde boş parola ile ayar kaydı/yenileme, üç favori/boş yuva kalıcılığı, gerçek sahne komutu ve başlangıca dönüş, Desktop Audio seviye/susturma komutları ve geri yükleme doğrulandı. LAN adresindeki ayrı Chrome sekmesinde eşleşmemiş erişim engeli, kodla giriş ve yönetim kontrollerinin gizlenmesi gözlendi. OBS yerel pencere erişimi olmadığından OBS içinden ters yön ses, WebSocket sunucu kesintisi ve kayıt/dosya oynatma denenmedi. Controller yeniden başlatılmadı; çalışan kaynak sürümü doğrulanmadı. Fiziksel telefon/QR ve mobil yerleşim kabulü açık; ekran boyutu denemesinde tarayıcı aracı koptu, oturum iptali ve ekran boyutunu geri alma doğrulanamadı. Ara ses geri yüklemesinde ilk susturma tıklaması uygulanmamış göründü, ayrı tekrar ile başlangıç durumu doğrulandı; nedeni açık. Doğrudan /pair gezinmesinde Forbidden Origin görüldü, panel içi bağlantı çalıştı; kesin kök neden ölçülmedi. Tam kabul kutuları değiştirilmedi. Ayrıntı: `test_output/2026-11-02_15-05-00_manual-checklist-browser.md`.
+
+## 3 Kasım 2026 — GitHub paylaşım hazırlığı
+
+- [x] Yerel yapılandırma, favoriler ve derlenmiş uygulama kaynak takibinden çıkarıldı; .gitignore eklendi.
+- [x] Örnek yapılandırmaya parola etiketi ve loopback başlangıcı eklendi; indirme ve ilk yüklemeden güncelleme adımları açıklandı.
+- [x] Kullanıcının aktif kullanım bildirimi README'ye, tarihli otomatik test raporlarından ayrı kaydedildi.
+
+Bu teslim uygulama mantığını değiştirmez. Depo/belge kontrolleri uygulama veya gerçek OBS testi değildir; performans ve platform kabul kutuları bu işlemle kapanmaz. İlk commit geçmişi korunur; başlangıçtaki örnek değerler geçmişten silinmez.

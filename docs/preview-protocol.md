@@ -1,10 +1,10 @@
 # Yerel önizleme protokolü — taslak v1
 
-Durum: Kullanıcının Controller entegrasyonu isteğiyle eklentinin mevcut deneysel v1 formatı Controller'da uygulandı. Wire formatı değiştirilmedi. Controller Linux Unix soketini sunar, H.264 verisini WebRTC ile taşır. Gerçek OBS/telefon üzerinde kabul ve performans testi hâlâ açıktır; otomatik testler simüle gönderici ve gerçek WebRTC taşıması kullanır.
+Durum: Eklenti ve Controller deneysel v1 wire formatını uygular. Controller Linux Unix soketini sunar ve H.264 verisini yeniden kodlamadan WebRTC ile tarayıcıya taşır. 3 Kasım 2026'da proje sahibi aktif kullanım bildirmiştir; sürümlü OBS/cihaz kabulü ve sayısal performans ölçümleri ayrıca kaydedilmelidir. Otomatik taşıma testleri simüle gönderici ve gerçek WebRTC kullanır.
 
 ## Güven sınırı ve taşıma
 
-Linux AF_UNIX/SOCK_STREAM, `${XDG_RUNTIME_DIR}/obs-lan-controller/preview.sock`. Controller sunucu, eklenti istemcidir. Controller dizini 0700 ve soketi 0600 oluşturmalı; eski soketi yalnız kendi sahipliğini doğruladıktan sonra temizlemelidir. İki taraf `SO_PEERCRED` ile aynı etkin UID'yi doğrular. Eklenti dizin/soket için `lstat` sahiplik/tür/izin kontrolü yapar, symlink ve diğer kullanıcılara açık hedefleri reddeder. Controller da peer UID'sini doğrulamadan oturum kabul etmemelidir. Dinlenen TCP/LAN video portu, token dosyası, OBS parolası veya ayrı kontrol sunucusu yoktur.
+Linux AF_UNIX/SOCK_STREAM, `${XDG_RUNTIME_DIR}/obs-lan-controller/preview.sock`. Controller sunucu, eklenti istemcidir. Controller dizini 0700 ve soketi 0600 oluşturmalı; eski soketi yalnız kendi sahipliğini doğruladıktan sonra temizlemelidir. İki taraf `SO_PEERCRED` ile aynı etkin UID'yi doğrular. Eklenti dizin/soket için `lstat` sahiplik/tür/izin kontrolü yapar, symlink ve diğer kullanıcılara açık hedefleri reddeder. Controller da peer UID'sini doğrulamadan oturum kabul etmemelidir. Eklentinin yerel taşıması TCP/LAN video portu açmaz ve OBS parolası taşımaz. Controller'ın tarayıcıya sunduğu HTTP/WebRTC bağlantısı bu yerel soketten ayrıdır.
 
 Bu prototipte yetki sınırı aynı Unix kullanıcısıdır; aynı UID altında kötü niyetli süreçlere karşı uygulama kimliği/ayrı oturum sırrı sağlamaz. Ayrı kullanıcıdaki Controller desteklenmez. Daha güçlü tehdit modelinde nonce/HMAC veya doğrulanmış fd aktarımı ayrı sürümde tasarlanmalıdır. Flatpak dosya sistemi/UID/runtime görünürlüğü ayrıca doğrulanmalıdır; `--filesystem=host` önerilmez.
 
@@ -46,4 +46,4 @@ Kuyruk en fazla 60 paket / 4 MiB; tek access unit en fazla 4 MiB. Encoder callba
 
 ## Henüz uygulanmayan sözleşme parçaları
 
-Yapılandırılmış hata/istatistik mesajı, codec pazarlığı, H.264 dışındaki codec'ler, gerçek donanım encoder seçimi, ACK/izleyici limiti ve WebRTC sinyalleşmesi bu sürümde yoktur. Eklenti başlatma hatasını OBS loguna yazar ve soketi kapatır; Controller bunu önizleme bağlantı hatası olarak göstermeli, OBS kontrol bağlantısını kesmemelidir.
+Yapılandırılmış hata/istatistik mesajı, codec pazarlığı, H.264 dışındaki codec'ler, gerçek donanım encoder seçimi, uygulama düzeyinde ACK bu yerel protokolde yoktur. İzleyici sınırı ve tarayıcı WebRTC sinyalleşmesi Controller tarafından uygulanır. Eklenti başlatma hatasını OBS loguna yazar ve soketi kapatır; Controller bunu önizleme bağlantı hatası olarak göstermeli, OBS kontrol bağlantısını kesmemelidir.

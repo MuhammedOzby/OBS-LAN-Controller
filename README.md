@@ -2,6 +2,17 @@
 
 Go ile sunulan, Bootstrap Kehribar Gece tabanlı OBS paneli. **Kontrol** ekranında program önizlemesi, OBS metrikleri, üç favori sahne ve ses seviyesi/susturma bulunur. **Deck** düzenlenebilir 12 tuşla sahne, kaynak görünürlüğü, susturma ve medya kontrolü sunar. **Yayın Yönetimi** yayın/kayıt işlemlerinin tek yeridir. Dördüncü sekme **Mobil cihaz ile giriş**, telefonla QR eşleştirme içindir. Güvenilir HTTPS/PWA henüz yoktur.
 
+## İndirme
+
+```sh
+git clone https://github.com/MuhammedOzby/OBS-LAN-Controller.git
+cd OBS-LAN-Controller
+```
+
+Canlı önizleme için ayrıca [OBS LAN Controller Live Preview Extension](https://github.com/MuhammedOzby/OBS-LAN-Controller-Live-Preview-Extension) kurulur. Sahne, ses ve yayın/kayıt kontrolü OBS'nin yerleşik WebSocket sunucusunu kullanır.
+
+> **Kullanım durumu — 3 Kasım 2026:** Proje sahibi uygulamayı ve eklentiyi test edip aktif kullandığını bildirdi. Bu kullanıcı bildirimi, aşağıdaki tarihli test raporlarından ayrıdır. Test edilen OBS sürümü, cihaz/tarayıcı ve sayısal performans ölçümleri ayrıca kaydedilmelidir.
+
 ## Çalıştırma
 
 OBS'ye yeni başladıysanız önce [kolay OBS ayarları ve kayıt sorunları](RECOMMENDATIONS.md) sayfasına bakın.
@@ -31,7 +42,7 @@ Dosya yoksa ilk kurulum yalnız bu bilgisayara açık başlar. Dosya zaten varsa
 - `server.listening_ip`: HTTP dinleme IP'si; `0.0.0.0` tüm IPv4 arayüzleri, `127.0.0.1` yalnızca bu bilgisayar.
 - `server.port`: HTTP portu; başlangıç değeri `8080`.
 
-Normal kullanımda JSON'u elle düzenlemek gerekmez. İsterseniz `configuration.example.json` dosyasını `configuration.json` olarak kopyalayıp düzenleyebilirsiniz. IP adresleri ve 1–65535 port aralığı doğrulanır; mevcut dosya hatalıysa uygulama durur, üzerine yazılmaz. Eksik dosya yerel ilk kurulumu açar. HTTP dinleme adresi/portu değişince yeniden başlatın; pencereden kaydedilen OBS bağlantı ayarı sonraki istekte yeniden bağlanır. `-addr` geçici HTTP adresi önceliğidir; ilk kurulumda yalnız loopback adresi kabul edilir.
+Normal kullanımda JSON'u elle düzenlemek gerekmez. Örnek dosyayı kopyalarsanız `OBS_WEBSOCKET_PAROLANIZ` etiketini gerçek OBS WebSocket parolanızla değiştirin; parolasız OBS için boş dize kullanın. İsterseniz `configuration.example.json` dosyasını `configuration.json` olarak kopyalayıp düzenleyebilirsiniz. IP adresleri ve 1–65535 port aralığı doğrulanır; mevcut dosya hatalıysa uygulama durur, üzerine yazılmaz. Eksik dosya yerel ilk kurulumu açar. HTTP dinleme adresi/portu değişince yeniden başlatın; pencereden kaydedilen OBS bağlantı ayarı sonraki istekte yeniden bağlanır. `-addr` geçici HTTP adresi önceliğidir; ilk kurulumda yalnız loopback adresi kabul edilir.
 
 `configuration.json` parola içerdiği için Git dışında tutulur; paylaşılabilir şablon `configuration.example.json` dosyasıdır. Panel dosyayı atomik olarak yalnız kullanıcıya açık `0600` izinle yazar. Elle oluşturduysanız `chmod 600 configuration.json` ile koruyun. Mevcut parola tarayıcıya geri gönderilmez; pencerede yeni parola boş bırakılırsa korunur, **Kayıtlı parolayı sil** işaretlenirse temizlenir. OBS'nin yerleşik WebSocket sunucusu etkin olmalıdır. Kopmada veriler temizlenir, sonraki isteklerde iki saniyelik bekleme ile yeniden denenir. Komutlar otomatik tekrar edilmez.
 
@@ -67,7 +78,7 @@ Video soketi IP/port değildir: `$XDG_RUNTIME_DIR/obs-lan-controller/preview.soc
 
 Doğrulama: gerçek H.264 FFmpeg test görüntüsü → simüle eklenti → gerçek Unix soketi → WebRTC/SRTP/RTP → H.264 çözümü otomatik test edildi. Bu, gerçek OBS program videosu, telefon, sahne geçişi veya performans kabulünün yerine geçmez; bunlar hedef bilgisayarda ayrıca doğrulanmalıdır. FFmpeg yalnız isteğe bağlı entegrasyon test aracıdır, uygulama bağımlılığı değildir.
 
-Paylaşılabilir örnek yapılandırma tüm IPv4 arayüzlerini (`0.0.0.0:8080`) kullanır; dosyasız ilk kurulum ise yalnız loopback'te başlar. Yalnızca güvenilir yerel ağda kullanın, internete port yönlendirmesi yapmayın. **HTTP şifreli değildir; ağ trafiğini okuyabilen biri kodu veya oturumu ele geçirebilir.** Güvenilir HTTPS üretim teslim şartı olarak açıktır. Güvenlik duvarı TCP 8080 erişimini engelliyorsa ayrıca izin gerekir; uygulama sistem/güvenlik duvarı ayarlarını değiştirmez.
+Paylaşılabilir örnek yapılandırma ve dosyasız ilk kurulum yalnız loopback (`127.0.0.1:8080`) üzerinde başlar. Telefon erişimi için yerel ayarlar penceresinden HTTP dinleme adresini `0.0.0.0` yapıp Controller'ı yeniden başlatın. Yalnızca güvenilir yerel ağda kullanın, internete port yönlendirmesi yapmayın. **HTTP şifreli değildir; ağ trafiğini okuyabilen biri kodu veya oturumu ele geçirebilir.** Güvenilir HTTPS üretim teslim şartı olarak açıktır. Güvenlik duvarı TCP 8080 erişimini engelliyorsa ayrıca izin gerekir; uygulama sistem/güvenlik duvarı ayarlarını değiştirmez.
 
 ### Telefon/LAN eşleştirme
 
@@ -81,6 +92,12 @@ QR ve kod 5 dakika geçerli ve tek kullanımlıktır; bir telefonu eşleştirdik
 Oturum 12 saat sürer. **Tüm LAN oturumlarını iptal et** düğmesi veya sunucuyu yeniden başlatmak erişimi kaldırır. Bu nedenle sunucu tekrar açılınca yeniden giriş istenmesi normaldir; tekrar QR okutabilirsiniz. QR kalıcı giriş veya şifreli bağlantı sağlamaz. OBS parolası QR'a konmaz; QR yerelde üretilir, harici bir QR servisine gönderilmez.
 
 Eşleştirilmemiş LAN API istekleri 401 alır; panel sayfaları eşleştirmeye yönlenir. Oturum çerezi HttpOnly/SameSite=Strict, doğrudan TLS altında ayrıca Secure'dür. En fazla 128 oturum ve dakikada 20 başarısız kod denemesi kabul edilir. OBS parolası eşleştirme kodu değildir, tarayıcıya gönderilmez. Host koruması yalnız localhost/loopback ve sunucunun başlangıçta tespit ettiği arayüz IP'lerini kabul eder; keyfi DNS adı ve proxy başlıkları güvenilmez. IP değişince sunucuyu yeniden başlatın. Reverse proxy desteği yoktur; loopback proxy arkasına koymak yerel erişim sınırını geçersiz kılabilir. Tüm istek gövdeleri 5 saniyelik okuma sınırına tabidir.
+
+## İlk GitHub yüklemesinden güncelleme
+
+İlk yüklemedeki `configuration.json`, `configuration.json.favorites.json` ve derlenmiş `obs-lan-controller` artık Git tarafından dağıtılmaz. Örnek ayarlar `configuration.example.json` içindedir; uygulamayı kaynaklardan derleyin. Yeni favori seçimleri yerelde saklanır ve Git dışında kalır.
+
+İlk yüklemeden klonladığınız bir çalışma klasörünü güncelliyorsanız **`git pull` öncesinde**, mevcut yapılandırmanızı ve favori dosyanızı repo dışında özel bir klasöre yedekleyin. Takipten çıkarma güncellemesi bu dosyaları çalışma klasöründen kaldırabilir. Güncellemeden sonra dosyaları eski konumlarına geri koyun ve `configuration.json` izinlerini `chmod 600 configuration.json` ile koruyun. Derlenmiş uygulamayı `go build -o obs-lan-controller .` ile yeniden oluşturun. Çalışan Controller'ı uygun zamanda yeniden başlatın.
 
 ## Geliştirme
 

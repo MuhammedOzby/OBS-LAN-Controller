@@ -2,10 +2,10 @@
   "obs": {
     "ip": "127.0.0.1",
     "port": 4455,
-    "password": ""
+    "password": "OBS_WEBSOCKET_PAROLANIZ"
   },
   "server": {
-    "listening_ip": "0.0.0.0",
+    "listening_ip": "127.0.0.1",
     "port": 8080
   }
 }

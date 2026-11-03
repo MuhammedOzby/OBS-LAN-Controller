@@ -1,0 +1,15 @@
+# Local OBS settings and scene preferences
+/configuration.json
+*.favorites.json
+
+# Local build outputs
+/obs-lan-controller
+/obs-lan-controller.exe
+/bin/
+/dist/
+
+# Local environment and editor files
+.env
+.env.*
+!.env.example
+.DS_Store
