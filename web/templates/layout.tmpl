@@ -1,0 +1,59 @@
+{{define "layout"}}<!doctype html>
+<html lang="tr" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <title>{{.Title}} · OBS LAN Controller</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/static/vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/app.css">
+  {{if eq .Template "broadcast"}}<link rel="stylesheet" href="/static/broadcast.css">{{end}}
+  {{if eq .Template "deck"}}<link rel="stylesheet" href="/static/deck.css">{{end}}
+  {{if eq .Template "control"}}<script src="/static/audio.js" defer></script>{{end}}
+  <script src="/static/app.js" defer></script>
+  {{if .Local}}<script src="/static/settings.js" defer></script>{{end}}
+  {{if eq .Template "control"}}<script src="/static/preview.js" defer></script>{{end}}
+  {{if eq .Template "broadcast"}}<script src="/static/broadcast.js" defer></script>{{end}}
+  {{if eq .Template "deck"}}<script src="/static/deck.js" defer></script>{{end}}
+</head>
+<body>
+  <a class="skip-link" href="#main">İçeriğe geç</a>
+  <div class="app-shell">
+
+    <nav class="nav nav-tabs app-nav" aria-label="Ana gezinme">
+      <a class="nav-link{{if eq .Path "/"}} active{{end}}" href="/"{{if eq .Path "/"}} aria-current="page"{{end}}>Kontrol</a>
+      <a class="nav-link{{if eq .Path "/deck"}} active{{end}}" href="/deck"{{if eq .Path "/deck"}} aria-current="page"{{end}}>Deck</a>
+      <a class="nav-link{{if eq .Path "/yayin-yonetimi"}} active{{end}}" href="/yayin-yonetimi"{{if eq .Path "/yayin-yonetimi"}} aria-current="page"{{end}}>Yayın Yönetimi</a>
+      <a class="nav-link{{if eq .Path "/mobil-cihaz-ile-giris"}} active{{end}}" href="/mobil-cihaz-ile-giris"{{if eq .Path "/mobil-cihaz-ile-giris"}} aria-current="page"{{end}}>Mobil cihaz ile giriş</a>
+      <span class="connection-status" role="status"><span aria-hidden="true">●</span> OBS bağlı değil</span>
+      {{if .Local}}<button type="button" id="settings-open" class="btn btn-sm btn-outline-warning">Ayarlar</button>{{end}}
+    </nav>
+    <main id="main">
+
+      {{if eq .Template "control"}}{{template "control" .}}{{end}}
+      {{if eq .Template "deck"}}{{template "deck" .}}{{end}}
+      {{if eq .Template "broadcast"}}{{template "broadcast" .}}{{end}}
+      {{if eq .Template "mobile"}}<section class="pair-panel"><h1>Mobil cihaz ile giriş</h1>{{template "pair-content" .Pair}}</section>{{end}}
+    </main>
+    <footer>OBS WebSocket kontrolleri · Bağımsız WebRTC program önizlemesi</footer>
+  </div>
+  {{if .Local}}
+  <dialog id="settings-dialog" class="app-dialog" aria-labelledby="settings-title">
+    <form id="settings-form">
+      <h2 id="settings-title">Bağlantı ayarları</h2>
+      <p>OBS WebSocket ayarlarını girin. HTTP şifreli değildir; yalnız güvenilir ağ kullanın. PWA için güvenilir HTTPS ayrıca gereklidir.</p>
+      <label for="settings-host">OBS IP adresi</label><input class="form-control" id="settings-host" required>
+      <label for="settings-port">OBS portu</label><input class="form-control" id="settings-port" type="number" min="1" max="65535" required>
+      <label for="settings-password">Yeni OBS parolası (boş bırakılırsa korunur)</label><input class="form-control" id="settings-password" type="password" autocomplete="new-password">
+      <label><input type="checkbox" id="settings-clear"> Kayıtlı parolayı sil</label><br>
+      <label for="settings-listen">HTTP dinleme IP adresi</label><input class="form-control" id="settings-listen" required>
+      <label for="settings-listen-port">HTTP dinleme portu</label><input class="form-control" id="settings-listen-port" type="number" min="1" max="65535" required>
+      <p>Dinleme adresi değişikliği yeniden başlatma gerektirir. İlk kurulum yalnız loopback üzerinde kalır.</p>
+      <p id="settings-message" role="status"></p>
+      <button class="btn btn-warning" type="submit">Kaydet</button> <button class="btn btn-outline-light" id="settings-close" type="button">Kapat</button>
+    </form>
+  </dialog>
+  {{end}}
+</body>
+</html>{{end}}

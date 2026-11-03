@@ -1,0 +1,14 @@
+{{define "pair-content"}}
+{{if .Local}}
+<p>Telefonun normal kamerasıyla, telefonunuzun bağlı olduğu ağ adresinin QR kodunu okutun. Kod tek kullanımlıktır; en fazla 5 dakika geçerlidir ve bilgisayar saatine göre {{.Expires}} itibarıyla sona erer.</p>
+{{if .QRs}}<div class="pair-qr-list">{{range .QRs}}<div><p>{{.Address}}</p><img width="256" height="256" alt="Bu ağ adresi için eşleştirme QR kodu" src="{{.Image}}"></div>{{end}}</div>{{else}}<p>LAN adresi kullanılamıyor. Ayarlarda HTTP dinleme adresini LAN için etkinleştirin ve uygulamayı yeniden başlatın.</p>{{end}}
+<p>Elle giriş kodu:</p><output>{{.Code}}</output>
+<p>Yeni kod için <a href="/pair">eşleştirme sayfasını yenileyin</a>; önceki kod geçersiz olur.</p>
+<form method="post" action="/pair"><input type="hidden" name="action" value="revoke-all"><button class="btn btn-warning" type="submit">Tüm LAN oturumlarını iptal et</button></form>
+{{else}}
+{{if .Error}}<p role="alert">{{.Error}}</p>{{end}}
+<p>OBS bilgisayarında yerel panelde Mobil cihaz ile giriş sekmesini veya /pair sayfasını açın. Telefon kamerasıyla QR kodu okutun ya da kodu aşağıya girin.</p>
+<form id="pair-form" method="post" action="/pair"><label for="code">Eşleştirme kodu</label><input id="code" name="code" required minlength="12" maxlength="12" pattern="[A-F0-9]{12}" autocomplete="off" autocapitalize="characters" spellcheck="false"><button type="submit">Eşleştir</button></form>
+{{end}}
+<p>Oturum 12 saat sürer; sunucu yeniden başlatıldığında silinir. HTTP şifreli değildir; yalnız güvenilir LAN kullanın.</p>
+{{end}}

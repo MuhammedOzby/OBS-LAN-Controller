@@ -1,0 +1,111 @@
+{{define "control"}}
+<section id="control-dashboard" class="control-dashboard" aria-label="OBS kontrol paneli">
+  <div class="program-column">
+    <figure class="program-panel">
+      <div class="program-heading"><strong>PROGRAM</strong><span id="current-scene">Sahne bekleniyor</span></div>
+      <div class="preview-stage"><div class="preview-frame">
+        <video id="program-video" autoplay muted playsinline aria-label="OBS program canlı önizlemesi" hidden></video>
+        <div id="preview-placeholder">Program görüntüsü bekleniyor</div>
+      </div></div>
+      <figcaption class="preview-caption"><span id="preview-status" role="status">Önizleme bağlantısı bekleniyor</span><span>Önizleme FPS: <strong id="preview-fps">—</strong></span><button id="preview-retry" type="button" hidden>Yeniden dene</button></figcaption>
+    </figure>
+    <section class="performance-panel" aria-label="OBS performansı">
+      <div class="stream-line"><strong id="stream-state" role="status">Yayın yapılmıyor</strong><span id="stream-duration">—</span></div>
+      <dl class="performance-metrics">
+        <div><dt>OBS FPS</dt><dd id="obs-fps">—</dd></div>
+        <div><dt>Bellek</dt><dd id="obs-memory">—</dd></div>
+        <div><dt>Render</dt><dd id="obs-render">—</dd></div>
+        <div><dt>Atlama R / K</dt><dd id="obs-skips">—</dd></div>
+      </dl>
+    </section>
+  </div>
+  <aside class="scene-column" aria-label="Sahneler ve yayın istatistikleri">
+    <section class="scenes-panel" aria-label="Favori OBS sahneleri">
+      <h2>Sahneler <span>Üç favori yuva</span></h2>
+      <div class="scene-buttons">
+        <button class="btn scene-button" type="button" data-scene-slot="0" disabled aria-pressed="false">Sahne 1 yok</button>
+        <button class="btn scene-button" type="button" data-scene-slot="1" disabled aria-pressed="false">Sahne 2 yok</button>
+        <button class="btn scene-button" type="button" data-scene-slot="2" disabled aria-pressed="false">Sahne 3 yok</button>
+      </div>
+      <p id="scene-feedback" role="status">OBS bağlantısı bekleniyor</p>
+      <button id="favorites-edit" type="button">Favorileri düzenle</button>
+    </section>
+    <section class="audio-panel" aria-label="Ses kaynakları">
+      <h2>Ses kaynakları</h2>
+      <p id="audio-feedback" role="status">OBS bağlantısı bekleniyor</p>
+      <div id="audio-inputs"></div>
+    </section>
+    <table class="stats-table" aria-label="Yayın istatistikleri"><tbody>
+      <tr><th scope="row">CPU</th><td id="stat-cpu">—</td></tr>
+      <tr><th scope="row">AĞ</th><td id="stat-network">—</td></tr>
+      <tr><th scope="row">DROP</th><td id="stat-drop">—</td></tr>
+      <tr><th scope="row">Kalite</th><td id="stat-quality">Bilinmiyor</td></tr>
+    </tbody></table>
+  </aside>
+</section>
+<dialog id="favorites-editor" class="app-dialog" aria-labelledby="favorites-title">
+  <form id="favorites-form">
+    <h2 id="favorites-title">Favori sahneler</h2>
+    <p>Boş yuvalara izin verilir; aynı sahne iki kez seçilemez.</p>
+    <label for="favorite-0">Yuva 1</label><select class="form-select" id="favorite-0"></select>
+    <label for="favorite-1">Yuva 2</label><select class="form-select" id="favorite-1"></select>
+    <label for="favorite-2">Yuva 3</label><select class="form-select" id="favorite-2"></select>
+    <p id="favorites-feedback" role="status"></p>
+    <button class="btn btn-outline-light" type="button" id="favorites-close">İptal</button>
+    <button class="btn btn-warning" type="submit">Kaydet</button>
+  </form>
+</dialog>
+{{end}}
+
+{{define "deck"}}
+<section id="deck-dashboard" class="deck-dashboard" aria-label="Özelleştirilebilir OBS Deck">
+  <div class="deck-workspace">
+    <header class="deck-toolbar"><div><span class="deck-eyebrow">KİŞİSEL KONTROL YÜZEYİNİZ</span><h2>Bir dokunuş, tam kontrol.</h2></div><button id="deck-edit" class="btn deck-tool" type="button" aria-pressed="false">Düzeni düzenle</button></header>
+    <div class="deck-legend" aria-label="Tuş türleri"><span class="deck-color-amber">● Sahne</span><span class="deck-color-blue">● Kaynak</span><span class="deck-color-green">● Ses</span><span class="deck-color-purple">● Medya</span><small id="deck-count">12 tuş yuvası</small></div>
+    <div id="deck-grid" class="deck-grid" aria-label="Deck tuşları" aria-busy="true"></div>
+    <div class="deck-bottom"><span id="deck-mode-note">Gerçek OBS durumu · Komutlar tekrar gönderilmez</span><button id="deck-reset" type="button" class="deck-text-button">OBS’den otomatik doldur</button></div>
+  </div>
+  <aside class="deck-sidebar">
+    <section class="deck-context"><span class="deck-eyebrow">ŞİMDİ PROGRAMDA</span><div class="deck-program-icon" aria-hidden="true">▣</div><strong id="deck-program">Bağlantı bekleniyor</strong><span id="deck-online" class="deck-state">OBS durumu okunuyor</span><div class="deck-context-detail"><span>Hazır tuşlar</span><strong id="deck-ready">— / 12</strong></div></section>
+    <section class="deck-history"><h2>Son dokunuşlar <span>Bu oturum</span></h2><ol id="deck-log"><li>Deck hazır olduğunda bir tuşa dokunun.</li></ol><p id="deck-feedback" role="status" aria-live="polite">Sahneler ve kaynaklar OBS’den okunuyor…</p></section>
+    <div class="deck-tip"><strong>Deck sizin ritminizde.</strong><p>Düzenleme modunda bir yuvaya dokunun; eylemini, rengini ve yerini seçin.</p><small>Yayın / kayıt yalnızca Yayın Yönetimi’nde.</small></div>
+  </aside>
+</section>
+<dialog id="deck-editor" class="deck-editor" aria-labelledby="deck-editor-title">
+  <form id="deck-form"><header><div><span class="deck-eyebrow">TUŞ DÜZENLEYİCİ</span><h2 id="deck-editor-title">Tuşu kişiselleştir</h2></div><button id="deck-close" class="deck-text-button" type="button" aria-label="Düzenleyiciyi kapat">✕</button></header>
+    <label>Etiket<input id="deck-label" class="form-control" maxlength="40" placeholder="OBS adını kullan"></label>
+    <label>Eylem<select id="deck-action" class="form-select"><option value="scene">Sahneye geç</option><option value="visibility">Kaynağı göster / gizle</option><option value="mute">Sesi sustur / aç</option><option value="media-play">Medyayı oynat</option><option value="media-pause">Medyayı duraklat</option><option value="media-restart">Medyayı yeniden başlat</option><option value="media-stop">Medyayı durdur</option></select></label>
+    <label>OBS hedefi<select id="deck-target" class="form-select" required></select></label>
+    <div class="deck-form-row"><label>Vurgu<select id="deck-color" class="form-select"><option value="amber">Kehribar</option><option value="blue">Mavi</option><option value="green">Yeşil</option><option value="purple">Mor</option></select></label><label>İkon<select id="deck-icon" class="form-select"><option value="scene">Sahne</option><option value="eye">Göz</option><option value="mic">Mikrofon</option><option value="play">Oynat</option><option value="pause">Duraklat</option><option value="restart">Tekrar</option><option value="stop">Durdur</option></select></label></div>
+    <div class="deck-form-row"><label>Konum<select id="deck-position" class="form-select"></select></label><p class="deck-editor-note">Hedef yuvadaki tuş ile yer değiştirir. Düzen bu tarayıcıda saklanır.</p></div>
+    <p id="deck-editor-feedback" role="status"></p><div class="deck-editor-actions"><button id="deck-delete" type="button" class="btn deck-tool">Tuşu sil</button><button type="submit" id="deck-save" class="btn deck-save">Tuşu kaydet</button></div>
+  </form>
+</dialog>
+{{end}}
+
+{{define "broadcast"}}
+<section id="broadcast-dashboard" class="broadcast-dashboard" aria-label="Yayın ve kayıt yönetimi">
+  <div class="output-grid">
+    <article class="output-card stream-card">
+      <div class="output-heading"><span class="output-icon" aria-hidden="true">◉</span><div><h2>Canlı yayın</h2><p>OBS yayın çıkışı</p></div><span id="manage-stream-state" class="output-badge" role="status">BİLİNMİYOR</span></div>
+      <div class="output-clock"><span id="manage-stream-duration">—</span><small>YAYIN SÜRESİ</small></div>
+      <dl class="output-metrics"><div><dt>Bit hızı</dt><dd id="manage-bitrate">—</dd></div><div><dt>Gönderilen</dt><dd id="manage-stream-bytes">—</dd></div><div><dt>Düşen kare</dt><dd id="manage-dropped">—</dd></div></dl>
+      <div class="output-actions"><button type="button" class="btn output-primary" data-broadcast-action="start-stream" disabled><span aria-hidden="true">▶</span> Yayını başlat</button><button type="button" class="btn output-danger" data-broadcast-action="stop-stream" disabled><span aria-hidden="true">■</span> Yayını durdur</button></div>
+      <p class="output-note">Yayın, OBS’de seçili servis ve ayarlarla başlatılır.</p>
+    </article>
+    <article class="output-card record-card">
+      <div class="output-heading"><span class="output-icon" aria-hidden="true">●</span><div><h2>Yerel kayıt</h2><p>OBS kayıt çıkışı</p></div><span id="manage-record-state" class="output-badge" role="status">BİLİNMİYOR</span></div>
+      <div class="output-clock"><span id="manage-record-duration">—</span><small>KAYIT SÜRESİ</small></div>
+      <dl class="output-metrics"><div><dt>Dosya boyutu</dt><dd id="manage-record-bytes">—</dd></div><div><dt>Kayıt durumu</dt><dd id="manage-record-mode">—</dd></div></dl>
+      <div class="output-actions"><button type="button" class="btn output-primary" data-broadcast-action="start-record" disabled><span aria-hidden="true">●</span> Kaydı başlat</button><button type="button" class="btn output-danger" data-broadcast-action="stop-record" disabled><span aria-hidden="true">■</span> Kaydı durdur</button></div>
+      <div class="record-secondary"><span class="record-action-hint" tabindex="0"><button type="button" class="btn output-secondary" data-broadcast-action="pause-record" aria-describedby="record-pause-note" disabled>Ⅱ Duraklat</button></span><span class="record-action-hint" tabindex="0"><button type="button" class="btn output-secondary" data-broadcast-action="resume-record" aria-describedby="record-pause-note" disabled>▶ Devam et</button></span><span id="record-pause-note">OBS / encoder desteğine bağlı</span></div>
+    </article>
+  </div>
+  <aside class="broadcast-sidebar">
+    <section class="broadcast-health"><h2><span class="section-kicker">01 /</span> Çıkış sağlığı</h2><dl class="health-grid"><div><dt>OBS FPS</dt><dd id="manage-fps">—</dd></div><div><dt>CPU</dt><dd id="manage-cpu">—</dd></div><div><dt>Render</dt><dd id="manage-render">—</dd></div><div><dt>Atlama R / K</dt><dd id="manage-skips">—</dd></div></dl><div class="health-context"><span>PROGRAM SAHNESİ</span><strong id="manage-scene">—</strong></div><p id="broadcast-health-note">OBS bağlantısı bekleniyor.</p></section>
+    <section class="broadcast-activity"><h2><span class="section-kicker">02 /</span> İşlem günlüğü</h2><ol id="broadcast-log" aria-label="Bu sayfa oturumundaki son işlemler"><li>Henüz işlem yapılmadı.</li></ol><p id="broadcast-feedback" role="status" aria-live="polite">Durum OBS’den okunuyor.</p></section>
+    <div class="broadcast-safety"><strong>Tek dokunuşla doğrudan işlem.</strong><span>Yayın ve kayıt birbirinden bağımsızdır. Bağlantı koparsa komutlar tekrar gönderilmez.</span></div>
+  </aside>
+</section>
+
+{{end}}

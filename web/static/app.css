@@ -1,0 +1,145 @@
+/* Bootstrap Kehribar Gece üzerine tasarım iskeleti. */
+:root {
+  color-scheme: dark;
+  scrollbar-gutter: auto;
+  --app-bg: #151412;
+  --app-surface: #1d1b18;
+  --app-border: #39342b;
+  --app-text: #eee8dc;
+  --app-muted: #b5ad9d;
+  --app-amber: #efb45b;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; }
+
+body { margin: 0; background: var(--app-bg); color: var(--app-text); font-family: system-ui, sans-serif; }
+a { color: inherit; }
+.app-shell { width: 100%; height: 100vh; height: 100dvh; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; padding: env(safe-area-inset-top, 0px) max(16px, env(safe-area-inset-right, 0px)) env(safe-area-inset-bottom, 0px) max(16px, env(safe-area-inset-left, 0px)); overflow: hidden; }
+.connection-status { margin-left: auto; align-self: center; flex: 0 0 auto; white-space: nowrap; color: var(--app-muted); font-size: .8rem; animation: connection-pulse 3s ease-in-out infinite; }
+.connection-status span { margin-right: 5px; }
+.app-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; border-bottom: 1px solid var(--app-border); }
+.pair-panel { padding: 1.5rem; max-width: 60rem; min-width: 0; min-height: 0; overflow: auto; overflow-wrap: anywhere; }
+.pair-panel output { display: block; color: var(--app-amber); font-size: 1.5rem; letter-spacing: .15em; }
+.pair-qr-list { display: flex; flex-wrap: wrap; gap: 1rem; }
+.pair-qr-list > div { min-width: 0; max-width: 100%; }
+.pair-qr-list img { max-width: 100%; height: auto; }
+.app-nav .nav-link { padding: 14px 18px; min-height: 48px; text-decoration: none; border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: transparent; color: var(--app-muted); }
+.app-nav .nav-link.active { color: var(--app-amber); border-bottom-color: var(--app-amber); background: transparent; }
+.app-nav .nav-link:hover { color: var(--app-text); }
+main { min-width: 0; min-height: 0; display: grid; grid-template-rows: minmax(0, 1fr); padding-top: clamp(8px, 2dvh, 20px); overflow: hidden; }
+.empty-panel { min-width: 0; min-height: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px; padding: clamp(8px, 2dvh, 24px); text-align: center; border: 1px dashed var(--app-border); border-radius: 12px; background: var(--app-surface); }
+.empty-panel p { margin: 0; font-weight: 500; }
+.empty-panel span { color: var(--app-muted); font-size: .875rem; max-width: 400px; }
+footer { color: var(--app-muted); font-size: .75rem; padding: clamp(6px, 1.5dvh, 16px) 0; }
+:focus-visible { outline: 2px solid var(--app-amber); outline-offset: 4px; }
+.skip-link { position: absolute; top: -100px; background: var(--app-surface); padding: 12px; }
+.skip-link:focus { top: 8px; }
+@media (max-width: 600px) {
+  .app-nav { gap: 0; }
+  .app-nav .nav-link { flex: 0 0 auto; text-align: center; padding: 14px 5px; font-size: .75rem; }
+  .connection-status { font-size: .65rem; }
+  .connection-status span { margin-right: 2px; }
+}
+@media (max-height: 450px) and (orientation: landscape) {
+  .app-nav .nav-link { padding: 10px 16px; min-height: 44px; }
+  main { padding-top: 8px; }
+  footer { padding: 6px 0; font-size: .7rem; }
+}
+/* Compact program dashboard; preview size is constrained by BOTH axes. */
+.control-dashboard { min-height: 0; min-width: 0; display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(220px, 1fr); gap: 12px; }
+.program-column { min-height: 0; min-width: 0; display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 10px; }
+.program-panel { min-height: 0; min-width: 0; margin: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 6px; }
+.program-heading { display: flex; justify-content: space-between; gap: 12px; font-size: .72rem; letter-spacing: .06em; color: var(--app-muted); }
+.program-heading span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; letter-spacing: 0; }
+.preview-stage { min-height: 0; min-width: 0; container-type: size; display: grid; place-items: center; background: #0e0d0b; border: 1px solid var(--app-border); border-radius: 10px; }
+.preview-frame { width: min(100cqw, calc(100cqh * 16 / 9)); aspect-ratio: 16 / 9; position: relative; background: #090908; }
+.preview-frame video { width: 100%; height: 100%; object-fit: contain; display: block; }
+.preview-caption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 12px; }
+#preview-status { min-width: 0; overflow-wrap: anywhere; flex: 1 1 180px; }
+#preview-fps { font-variant-numeric: tabular-nums; font-weight: 400; }
+#preview-retry { border: 0; padding: 0 4px; background: transparent; color: var(--app-amber); font: inherit; text-decoration: underline; }
+[hidden] { display: none !important; }
+#preview-placeholder { position: absolute; inset: 0; display: grid; place-items: center; padding: 12px; text-align: center; color: var(--app-muted); font-size: .8rem; }
+figcaption { color: var(--app-muted); font-size: .67rem; line-height: 1.3; }
+.performance-panel, .scenes-panel, .stats-table { border: 1px solid var(--app-border); background: var(--app-surface); border-radius: 10px; }
+.performance-panel { padding: 10px 12px; }
+.stream-line { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: .8rem; }
+#stream-state { color: var(--app-muted); }
+#stream-state.is-live, .connection-status.is-connected { color: #85c99b; }
+#stream-state.is-live::before { content: "● "; }
+#stream-duration { color: var(--app-muted); font-variant-numeric: tabular-nums; }
+.performance-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 8px 0 0; }
+.performance-metrics div { min-width: 0; }
+.performance-metrics dt { font-size: .65rem; font-weight: 400; color: var(--app-muted); white-space: nowrap; }
+.performance-metrics dd { margin: 2px 0 0; font-size: .86rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.scene-column { min-width: 0; min-height: 0; display: grid; grid-template-rows: minmax(0, 1fr) minmax(0, .7fr) auto; gap: 10px; }
+.audio-panel { min-height: 0; overflow: auto; border: 1px solid var(--app-border); background: var(--app-surface); border-radius: 10px; padding: 6px 8px; }
+.audio-panel h2 { font-size: .85rem; margin: 0 0 3px; }
+.audio-panel p { color: var(--app-muted); font-size: .72rem; margin: 0; }
+.audio-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 8px; align-items: center; margin: 4px 0; }
+.audio-row label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .75rem; }
+.audio-row input { grid-column: 1; width: 100%; min-height: 30px; accent-color: var(--bs-warning); }
+.audio-row button { grid-column: 2; grid-row: 1 / 3; font-size: .72rem; min-height: 38px; }
+.scenes-panel { min-height: 0; padding: 10px; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 8px; }
+h2 { margin: 0; font-size: .85rem; font-weight: 600; display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+h2 span { font-weight: 400; color: var(--app-muted); font-size: .65rem; }
+.scene-buttons { min-height: 0; display: grid; grid-template-rows: repeat(3, minmax(36px, 1fr)); gap: 6px; }
+.scene-button { min-width: 0; border: 1px solid var(--app-border); border-radius: 6px; background: #25221c; color: var(--app-text); text-align: left; padding: 6px 12px; font-size: .86rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.scene-button[aria-pressed="true"] { color: var(--app-amber); border-color: var(--app-amber); background: #332919; }
+.scene-button:not(:disabled):hover { border-color: var(--app-amber); color: var(--app-amber); }
+.scene-button:disabled { opacity: .45; }
+#scene-feedback { margin: 0; min-width: 0; color: var(--app-muted); font-size: .65rem; line-height: 1.3; }
+.stats-table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: .8rem; }
+.stats-table th, .stats-table td { padding: 8px 12px; border-bottom: 1px solid var(--app-border); }
+.stats-table tr:last-child > * { border: 0; }
+.stats-table th { color: var(--app-muted); font-size: .7rem; font-weight: 500; }
+.stats-table td { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+@media (max-width: 600px) and (orientation: portrait) {
+  .control-dashboard { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1.2fr) minmax(0, 1fr); gap: 10px; }
+  .scene-column { grid-template-columns: minmax(0, 1fr) minmax(130px, .9fr); grid-template-rows: minmax(0, 1fr) minmax(0, .7fr); }
+  .scene-column .scenes-panel { grid-row: 1 / 3; }
+  .stats-table { align-self: stretch; table-layout: fixed; }
+  .stats-table th { width: 32%; }
+  .stats-table th, .stats-table td { padding: 6px; }
+  .stats-table td { white-space: normal; overflow-wrap: anywhere; }
+  h2 { display: block; } h2 span { display: block; margin-top: 3px; }
+  .performance-metrics dd { font-size: .78rem; }
+}
+@media (max-height: 450px) and (orientation: landscape) {
+  .app-shell { padding-left: 12px; padding-right: 12px; }
+  .app-nav .nav-link { padding: 7px 14px; min-height: 38px; }
+  main { padding-top: 6px; }
+  .control-dashboard { gap: 10px; grid-template-columns: minmax(0, 2.2fr) minmax(280px, 1fr); }
+  .program-column, .scene-column { gap: 6px; }
+  .scene-column { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: minmax(80px, 1fr) auto; overflow-y: auto; }
+  .scene-column .scenes-panel { grid-row: 1 / 3; }
+  .audio-row button { padding: 4px; }
+  .performance-panel { padding: 6px 10px; }
+  .performance-metrics { margin-top: 4px; }
+  .performance-metrics dd { font-size: .78rem; }
+  .scenes-panel { padding: 6px 8px; gap: 5px; }
+  .scene-buttons { gap: 4px; }
+  .scene-button { min-height: 36px; padding: 4px 10px; font-size: .8rem; }
+  .scenes-panel h2 { line-height: 1.2; }
+  .stats-table th, .stats-table td { padding: 4px 10px; }
+  footer { padding: 4px 0; font-size: .65rem; }
+}
+@keyframes connection-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .4; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .connection-status { animation: none; }
+}
+.app-dialog {
+  width: min(32rem, 95vw);
+  max-height: 90dvh;
+  overflow-y: auto;
+  background: #1b1e22;
+  color: #f5f0e5;
+  border: 1px solid #ffc107;
+  border-radius: .7rem;
+  padding: 1rem;
+}
+.app-dialog::backdrop { background: rgb(0 0 0 / 70%); }
+.app-dialog label { margin-top: .5rem; }
